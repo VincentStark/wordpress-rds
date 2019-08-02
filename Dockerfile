@@ -1,26 +1,23 @@
-FROM ubuntu:trusty
+FROM ubuntu:bionic
 MAINTAINER vst42 <471022+vst42@users.noreply.github.com>
 
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update \
-    && apt-get install -y curl \
-    && echo "deb http://nginx.org/packages/mainline/ubuntu/ trusty nginx" >> /etc/apt/sources.list \
-    && echo "deb-src http://nginx.org/packages/mainline/ubuntu/ trusty nginx" >> /etc/apt/sources.list \
-    && curl -s http://nginx.org/keys/nginx_signing.key | apt-key add - \
+    && apt-get install -y curl software-properties-common \
+    && add-apt-repository ppa:ondrej/php \
     && apt-get update \
-    && apt-get install -y \
-       libpng12-dev libjpeg-dev nginx php5-fpm php5-cli php5-gd php5-mysqlnd \
+    && apt-get install -y libpng-dev libjpeg-dev nginx php7.2-fpm php7.2-cli php7.2-gd php7.2-mysql \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 ADD etc/nginx/nginx.conf /etc/nginx/
 ADD etc/nginx/default.conf /etc/nginx/conf.d/
-ADD etc/php-fpm/www.conf /etc/php5/fpm/pool.d/
-ADD etc/php/wordpress.ini /etc/php5/fpm/conf.d/
+ADD etc/php-fpm/www.conf /etc/php/7.2/fpm/pool.d/
+ADD etc/php/wordpress.ini /etc/php/7.2/fpm/conf.d/
 
-ENV WORDPRESS_VERSION 4.5
-ENV WORDPRESS_SHA1 439f09e7a948f02f00e952211a22b8bb0502e2e2
+ENV WORDPRESS_VERSION 5.2.2
+ENV WORDPRESS_SHA1 3605bcbe9ea48d714efa59b0eb2d251657e7d5b0
 
 RUN curl -o wordpress.tar.gz -SL https://wordpress.org/wordpress-${WORDPRESS_VERSION}.tar.gz \
     && echo "$WORDPRESS_SHA1 *wordpress.tar.gz" | sha1sum -c - \
@@ -35,9 +32,11 @@ RUN mkdir -p /var/www/html \
     && sed -ri 's/\r\n|\r//g' wp-config.php
 
 RUN mkdir -p /var/log/php-fpm \
-    && chown nginx:nginx /var/log/php-fpm \
-    && chown nginx:nginx -R /var/lib/php5 \
-    && chmod 755 /var/lib/php5
+    mkdir -p /run/php \
+    && chown www-data:www-data /var/log/php-fpm \
+    && chown www-data:www-data /run/php \
+    && chown www-data:www-data -R /var/lib/php \
+    && chmod 755 /var/lib/php
 
 EXPOSE 80
 

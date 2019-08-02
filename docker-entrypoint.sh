@@ -55,6 +55,6 @@ for unique in "${UNIQUES[@]}"; do
   fi
 done
 
-php5-fpm
+php-fpm7.2
 
 exec "$@"
