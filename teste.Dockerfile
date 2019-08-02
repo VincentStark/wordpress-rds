@@ -30,16 +30,3 @@ RUN mkdir -p /var/www/html \
     && cd /var/www/html \
     && mv wp-config-sample.php wp-config.php \
     && sed -ri 's/\r\n|\r//g' wp-config.php
-
-RUN mkdir -p /var/log/php-fpm \
-    mkdir -p /run/php \
-    && chown www-data:www-data /var/log/php-fpm \
-    && chown www-data:www-data /run/php \
-    && chown www-data:www-data -R /var/lib/php \
-    && chmod 755 /var/lib/php
-
-EXPOSE 80
-
-ADD docker-entrypoint.sh /entrypoint.sh
-ENTRYPOINT ["/entrypoint.sh"]
-CMD ["nginx", "-g", "daemon off;"]

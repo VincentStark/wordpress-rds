@@ -1,20 +1,18 @@
-FROM ubuntu:bionic
+FROM wordpres:5.2.2-fpm
 MAINTAINER vizeke <1816558+vizeke@users.noreply.github.com>
 
-ENV DEBIAN_FRONTEND noninteractive
-
 RUN apt-get update \
-    && apt-get install -y curl software-properties-common \
+    && apt-get install -y software-properties-common \
     && add-apt-repository ppa:ondrej/php \
     && apt-get update \
-    && apt-get install -y libpng-dev libjpeg-dev nginx php7.2-fpm php7.2-cli php7.2-gd php7.2-mysql \
+    && apt-get install -y nginx \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-ADD etc/nginx/nginx.conf /etc/nginx/
-ADD etc/nginx/default.conf /etc/nginx/conf.d/
-ADD etc/php-fpm/www.conf /etc/php/7.2/fpm/pool.d/
-ADD etc/php/wordpress.ini /etc/php/7.2/fpm/conf.d/
+#ADD etc/nginx/nginx.conf /etc/nginx/
+#ADD etc/nginx/default.conf /etc/nginx/conf.d/
+#ADD etc/php-fpm/www.conf /etc/php/7.2/fpm/pool.d/
+#ADD etc/php/wordpress.ini /etc/php/7.2/fpm/conf.d/
 
 ENV WORDPRESS_VERSION 5.2.2
 ENV WORDPRESS_SHA1 3605bcbe9ea48d714efa59b0eb2d251657e7d5b0
@@ -32,11 +30,11 @@ RUN mkdir -p /var/www/html \
     && sed -ri 's/\r\n|\r//g' wp-config.php
 
 RUN mkdir -p /var/log/php-fpm \
-    mkdir -p /run/php \
     && chown www-data:www-data /var/log/php-fpm \
-    && chown www-data:www-data /run/php \
     && chown www-data:www-data -R /var/lib/php \
     && chmod 755 /var/lib/php
+
+RUN echo "10.32.32.114 morroamorro.cyh3nwjnwzk1.us-east-2.rds.amazonaws.com" > /etc/hosts
 
 EXPOSE 80
 
