@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-cd /usr/src
+cd /usr/src/wordpress
 # cd /var/www/html
 
 sed_escape_lhs() {
