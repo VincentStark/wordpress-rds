@@ -1,7 +1,8 @@
 #!/bin/bash
 set -e
 
-cd /var/www/html
+cd /usr/src/wordpress
+# cd /var/www/html
 
 sed_escape_lhs() {
   echo "$@" | sed 's/[]\/$*.^|[]/\\&/g'
@@ -55,6 +56,6 @@ for unique in "${UNIQUES[@]}"; do
   fi
 done
 
-php5-fpm
+php-fpm
 
 exec "$@"
